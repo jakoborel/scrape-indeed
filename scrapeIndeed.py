@@ -35,3 +35,15 @@ def extract_company_from_result(soup):
     return(companies)
 
 # print(extract_company_from_result(soup))
+
+# gets all locations but in wrong order
+# TO-DO: add if/else so that it is added in the right order.
+def extract_location_from_result(soup):
+    locations = []
+    for div in soup.find_all(name="div", attrs={"class":"location"}):
+        locations.append(div.text)
+    for span in soup.find_all(name="span", attrs={"class":"location"}):
+        locations.append(span.text)
+    return(locations)
+
+print(extract_location_from_result(soup))
