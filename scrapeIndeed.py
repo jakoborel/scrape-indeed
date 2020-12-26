@@ -22,8 +22,8 @@ def extract_job_title_from_result(soup):
         for a in h2.find_all(name="a", attrs={"data-tn-element":"jobTitle"}):
             jobs.append(a["title"])
     return(jobs)
-
-# print(extract_job_title_from_result(soup))
+print("Jobs:")
+print(extract_job_title_from_result(soup))
 
 # Extract company name from the page
 def extract_company_from_result(soup):
@@ -33,8 +33,8 @@ def extract_company_from_result(soup):
         for b in company:
             companies.append(b.text.strip())
     return(companies)
-
-# print(extract_company_from_result(soup))
+print("Companies:")
+print(extract_company_from_result(soup))
 
 # gets all locations but in wrong order
 # TO-DO: add if/else so that it is added in the right order.
@@ -46,4 +46,5 @@ def extract_location_from_result(soup):
         locations.append(span.text)
     return(locations)
 
+print("Locations:")
 print(extract_location_from_result(soup))
