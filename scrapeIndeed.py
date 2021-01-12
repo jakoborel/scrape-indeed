@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
+# The URL can be adjusted to change the query for jobs
 URL = "https://www.indeed.com/jobs?q=data%20analyst&l=Omaha%2C%20NE&vjk=32a6ca0100d10ed7"
 
 # request the URL
