@@ -40,9 +40,9 @@ def extract_company_from_result(soup):
             companies.append(b.text.strip())
     return(companies)
 
-print("Companies:")
-print(len(extract_company_from_result(soup)))
-print(extract_company_from_result(soup))
+# print("Companies:")
+# print(len(extract_company_from_result(soup)))
+# print(extract_company_from_result(soup))
 
 # Extract location from the page
 def extract_location_from_result(soup):
@@ -57,9 +57,9 @@ def extract_location_from_result(soup):
             locations.append(div.find(name="span", attrs={"class":"location"}).text)
     return(locations)
 
-print("Locations:")
-print(len(extract_location_from_result(soup)))
-print(extract_location_from_result(soup))
+# print("Locations:")
+# print(len(extract_location_from_result(soup)))
+# print(extract_location_from_result(soup))
 
 # Extract salary from the page
 def extract_salary_from_result(soup):
@@ -71,6 +71,25 @@ def extract_salary_from_result(soup):
             salaries.append("NA")
     return(salaries)
 
-print("Salaries:")
-print(len(extract_salary_from_result(soup)))
-print(extract_salary_from_result(soup))
+# print("Salaries:")
+# print(len(extract_salary_from_result(soup)))
+# print(extract_salary_from_result(soup))
+
+# Extract summary snippet from the page
+# This is more complex:
+#   'li' in a 'ul' under summary <div> tag
+#   how to include multiple bullet points in single list value (String cat?)
+
+def extract_summary_from_result(soup):
+    summaries = []
+    for div in soup.find_all("div", attrs={"class": "row"}):
+        try:
+            
+        except Exception as e:
+            print(str(e))
+            #summaries.append("NA")
+    return(summaries)
+
+print("Summaries:")
+print(len(extract_summary_from_result(soup)))
+print(extract_summary_from_result(soup))
