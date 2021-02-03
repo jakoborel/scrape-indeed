@@ -8,7 +8,8 @@ import time
 # The URL can be adjusted to change the query for jobs
 
 # If comparing in browser, make sure to clear cookies.
-URL = "https://www.indeed.com/q-data-analyst-l-Omaha,-NE-jobs.html"
+# URL = "https://www.indeed.com/q-data-analyst-l-Omaha,-NE-jobs.html"
+URL = "https://www.indeed.com/jobs?q=receptionist&l=Omaha%2C+NE"
 
 # request the URL
 page = requests.get(URL)
@@ -25,6 +26,7 @@ def extract_job_title_from_result(soup):
         for a in h2.find_all(name="a", attrs={"data-tn-element":"jobTitle"}):
             jobs.append(a["title"])
     return(jobs)
+
 print("Jobs:")
 print(len(extract_job_title_from_result(soup)))
 print(extract_job_title_from_result(soup))
@@ -37,6 +39,7 @@ def extract_company_from_result(soup):
         for b in company:
             companies.append(b.text.strip())
     return(companies)
+
 print("Companies:")
 print(len(extract_company_from_result(soup)))
 print(extract_company_from_result(soup))
@@ -52,8 +55,22 @@ def extract_location_from_result(soup):
         except Exception as e:
             #print(str(e))
             locations.append(div.find(name="span", attrs={"class":"location"}).text)
-    
     return(locations)
+
 print("Locations:")
 print(len(extract_location_from_result(soup)))
 print(extract_location_from_result(soup))
+
+# Extract salary from the page
+def extract_salary_from_result(soup):
+    salaries = []
+    for div in soup.find_all(name="div", attrs={"class":"row"}):
+        try:
+            salaries.append(div.find(name="span", attrs={"class":"salaryText"}).text)
+        except:
+            salaries.append("NA")
+    return(salaries)
+
+print("Salaries:")
+print(len(extract_salary_from_result(soup)))
+print(extract_salary_from_result(soup))
