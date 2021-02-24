@@ -82,12 +82,23 @@ def extract_salary_from_result(soup):
 
 def extract_summary_from_result(soup):
     summaries = []
+    i=0
     for div in soup.find_all("div", attrs={"class": "row"}):
-        try:
-            
-        except Exception as e:
-            print(str(e))
-            #summaries.append("NA")
+        #try:
+        # This is not looping through the li's
+        for li in div.find("li"):
+            # print(str(li) + "\n")
+            if(not summaries):
+                summaries.append(str(li))
+                print(summaries[0])
+            else:
+                summaries[i] = summaries[i].join(str(li))
+        #except Exception as e:
+        #     print(str(e))
+        #     #summaries.append("NA")
+        print(i)
+        i+=1
+        print(i)
     return(summaries)
 
 print("Summaries:")
