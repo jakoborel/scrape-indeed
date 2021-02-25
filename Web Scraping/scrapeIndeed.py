@@ -80,25 +80,25 @@ def extract_salary_from_result(soup):
 #   'li' in a 'ul' under summary <div> tag
 #   how to include multiple bullet points in single list value (String cat?)
 
+# Extract summary bullet points from page
 def extract_summary_from_result(soup):
     summaries = []
     i=0
     for div in soup.find_all("div", attrs={"class": "row"}):
-        #try:
-        # This is not looping through the li's
-        for li in div.find("li"):
-            # print(str(li) + "\n")
-            if(not summaries):
-                summaries.append(str(li))
-                print(summaries[0])
-            else:
-                summaries[i] = summaries[i].join(str(li))
-        #except Exception as e:
-        #     print(str(e))
-        #     #summaries.append("NA")
-        print(i)
+        
+        for summary in div.find_all("div", attrs={"class":"summary"}):
+            for li in summary.find_all("li"):
+                if (len(summaries)<=i):
+                    summaries.append(str(li.text))
+                    # print("Summary appended")
+                elif(len(summaries)>i):
+                    summaries[i] = summaries[i] + " " + str(li.text)
+                    # print("Summary joined")
+                # except Exception as e:
+                #    print(str(e))
+                #   #summaries.append("NA")
         i+=1
-        print(i)
+        
     return(summaries)
 
 print("Summaries:")
