@@ -75,17 +75,11 @@ def extract_salary_from_result(soup):
 # print(len(extract_salary_from_result(soup)))
 # print(extract_salary_from_result(soup))
 
-# Extract summary snippet from the page
-# This is more complex:
-#   'li' in a 'ul' under summary <div> tag
-#   how to include multiple bullet points in single list value (String cat?)
-
 # Extract summary bullet points from page
 def extract_summary_from_result(soup):
     summaries = []
     i=0
     for div in soup.find_all("div", attrs={"class": "row"}):
-        
         for summary in div.find_all("div", attrs={"class":"summary"}):
             for li in summary.find_all("li"):
                 if (len(summaries)<=i):
