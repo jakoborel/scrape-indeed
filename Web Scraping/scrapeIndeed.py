@@ -95,6 +95,35 @@ def extract_summary_from_result(soup):
         
     return(summaries)
 
-print("Summaries:")
-print(len(extract_summary_from_result(soup)))
-print(extract_summary_from_result(soup))
+# print("Summaries:")
+# print(len(extract_summary_from_result(soup)))
+# print(extract_summary_from_result(soup))
+
+# Build url with a search query and optional arguments for location, salary, and page start filters
+def build_url(query, location="", salary="", start=""):
+    return "http://www.indeed.com/jobs?q=" + "+".join(str(query).split()) + "+" + str(salary) + "&l=" + str(location) + "&start=" + str(start)
+
+print(build_url("data scientist", "Omaha", "$40,000"))
+
+# max_results_per_city = 100
+# city_set = ['New+York','Chicago','San+Francisco', 'Austin', 'Seattle', 'Los+Angeles', 'Philadelphia', 'Atlanta', 'Dallas', 'Pittsburgh', 'Portland', 'Phoenix', 'Denver', 'Houston', 'Miami', 'Washington+DC', 'Boulder']
+# columns = ["city", "job_title", "company_name", "location", "summary", "salary"]
+# sample_df = pd.DataFrame(columns = columns)
+#scraping code:
+# for city in city_set:
+#     for start in range(0, max_results_per_city, 10):
+#         page = requests.get('http://www.indeed.com/jobs?q=data+scientist+%2420%2C000&l=' + str(city) + '&start=' + str(start))
+#         time.sleep(1)  #ensuring at least 1 second between page grabs
+#         soup = BeautifulSoup(page.text, "lxml", from_encoding="utf-8")
+#         #specifying row num for index of job posting in dataframe
+#         num = (len(sample_df) + 1) 
+#         #creating an empty list to hold the data for each posting
+#         job_post = [] 
+#         #append city name
+#         job_post.append(city) 
+#         extract each 
+#         #appending list of job post info to dataframe at index num
+#         sample_df.loc[num] = job_post
+
+#saving sample_df as a local csv file — define your own local path to save contents 
+#sample_df.to_csv("~Documents/GitHub/scrape-indeed/IndeedJobPostings.csv", encoding='utf-8')
