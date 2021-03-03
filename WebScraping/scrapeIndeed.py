@@ -9,12 +9,12 @@ import time
 
 # If comparing in browser, make sure to clear cookies.
 # URL = "https://www.indeed.com/q-data-analyst-l-Omaha,-NE-jobs.html"
-URL = "https://www.indeed.com/jobs?q=receptionist&l=Omaha%2C+NE"
+# URL = "https://www.indeed.com/jobs?q=receptionist&l=Omaha%2C+NE"
 
 # request the URL
-page = requests.get(URL)
+# page = requests.get(URL)
 
-soup = BeautifulSoup(page.text, "html.parser")
+# soup = BeautifulSoup(page.text, "html.parser")
 
 # print out the pretty html
 #print(soup.prettify())
@@ -27,9 +27,9 @@ def extract_job_title_from_result(soup):
             jobs.append(a["title"])
     return(jobs)
 
-print("Jobs:")
-print(len(extract_job_title_from_result(soup)))
-print(extract_job_title_from_result(soup))
+# print("Jobs:")
+# print(len(extract_job_title_from_result(soup)))
+# print(extract_job_title_from_result(soup))
 
 # Extract company name from the page
 def extract_company_from_result(soup):
@@ -104,6 +104,18 @@ def build_url(query, location="", salary="", start=""):
     return "http://www.indeed.com/jobs?q=" + "+".join(str(query).split()) + "+" + str(salary) + "&l=" + str(location) + "&start=" + str(start)
 
 print(build_url("data scientist", "Omaha", "$40,000"))
+
+def build_df(url):
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, "html.parser")
+    job_titles = extract_job_title_from_result(soup)
+    companies = extract_company_from_result(soup)
+    locations = extract_location_from_result(soup)
+    salaries = extract_salary_from_result(soup)
+    summaries = extract_summary_from_result(soup)
+    # dictionary of lists for column names
+    columns = {'title' : job_titles, 'company' : companies, 'location' : locations, 'salary' : salaries, 'summary' : summaries}
+    return pd.DataFrame(columns)
 
 # max_results_per_city = 100
 # city_set = ['New+York','Chicago','San+Francisco', 'Austin', 'Seattle', 'Los+Angeles', 'Philadelphia', 'Atlanta', 'Dallas', 'Pittsburgh', 'Portland', 'Phoenix', 'Denver', 'Houston', 'Miami', 'Washington+DC', 'Boulder']
