@@ -5,6 +5,10 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException   
+
+
 # The URL can be adjusted to change the query for jobs
 
 # If comparing in browser, make sure to clear cookies.
@@ -99,20 +103,56 @@ def extract_summary_from_result(soup):
 # print(len(extract_summary_from_result(soup)))
 # print(extract_summary_from_result(soup))
 
+     
+def check_exists_by_xpath(url, xpath):
+    try:
+        driver = webdriver.Chrome()
+        driver.get(url)
+        driver.find_element_by_xpath(xpath)
+    except NoSuchElementException:
+        driver.quit()
+        return False
+    driver.quit()
+    return True
+
 # Build url with a search query and optional arguments for location, salary, and page start filters
 def build_url(query, location="", salary="", start=""):
-    return "http://www.indeed.com/jobs?q=" + "+".join(str(query).split()) + "+" + str(salary) + "&l=" + str(location) + "&start=" + str(start)
+    return "http://www.indeed.com/jobs?q=" + "+".join(str(query).split()) + "+" + str(salary) + "&l=" + str(location)
 
-print(build_url("data scientist", "Omaha", "$40,000"))
+# print(build_url("data scientist", "Omaha", "$40,000"))
 
+# Build pandas DataFrame that contains the job post information.
 def build_df(url):
-    page = requests.get(url)
-    soup = BeautifulSoup(page.text, "html.parser")
-    job_titles = extract_job_title_from_result(soup)
-    companies = extract_company_from_result(soup)
-    locations = extract_location_from_result(soup)
-    salaries = extract_salary_from_result(soup)
-    summaries = extract_summary_from_result(soup)
+    start = 1
+    job_titles = []
+    companies = []
+    locations = []
+    salaries = []
+    summaries = []
+    print("Job titles: ", job_titles)
+    for i in range(5):
+        start = (i*10)
+        if (start==0):
+            url = url + "&start="
+        elif (start==10):
+            url = url + "10"
+        else:
+            url = url[:-2] + str(start)
+        # Add all of this to for loop. Use .extend to add to the lists
+        page = requests.get(url)
+        time.sleep(1)
+        soup = BeautifulSoup(page.text, "html.parser")
+        job_titles.extend(extract_job_title_from_result(soup))
+        companies.extend(extract_company_from_result(soup))
+        locations.extend(extract_location_from_result(soup))
+        salaries.extend(extract_salary_from_result(soup))
+        summaries.extend(extract_summary_from_result(soup))
+
+        # Check if there is a next page button
+        if(check_exists_by_xpath(url, "//a[@aria-label='Next']") == False):
+            break
+
+    print(job_titles)
     # dictionary of lists for column names
     columns = {'title' : job_titles, 'company' : companies, 'location' : locations, 'salary' : salaries, 'summary' : summaries}
     return pd.DataFrame(columns)
@@ -138,4 +178,4 @@ def build_df(url):
 #         sample_df.loc[num] = job_post
 
 #saving sample_df as a local csv file — define your own local path to save contents 
-#sample_df.to_csv("~Documents/GitHub/scrape-indeed/IndeedJobPostings.csv", encoding='utf-8')
+#sample_df.to_csv("~Documents/GitHub/scrape_indeed/IndeedJobPostings.csv", encoding='utf-8')

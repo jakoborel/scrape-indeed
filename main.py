@@ -20,12 +20,16 @@ class App(server.App):
 					id="button1",
 					label="Submit")]
 
+	tabs = ["Dashboard", "Table"]
+
 	outputs = [dict(type="html",
 					id="html",
+					tab="Table",
 					#add control linked to the control id to refresh output
 					control_id="button1"),
 				dict(type="table",
 					id="df",
+					tab="Table",
 					control_id="button1")]
 
 	# define how html output looks
