@@ -1,9 +1,11 @@
 import requests
 import bs4
 from bs4 import BeautifulSoup
-
-import pandas as pd
 import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import pandas as pd
+
 
 # If comparing in browser, make sure to clear cookies.
 # URL = "https://www.indeed.com/jobs?q=receptionist&l=Omaha%2C+NE"
@@ -68,6 +70,43 @@ def extract_summary_from_result(soup):
         i+=1
     return(summaries)
 
+# Extract qualifications for extended job details pane
+def extract_qualifications_from_result(url):
+    qualifications = []
+    url = url + "&vjk="
+    s = requests.Session()
+    page = s.get(url)
+    time.sleep(1)
+    soup = BeautifulSoup(page.text, "html.parser")
+    # Use bs4 to find all the urls extensions to loop through
+    rows = soup.find_all(name="div", attrs={"class":"row"})
+    url_extensions = []
+    for row in rows:
+        url_extensions.append(row["data-jk"])
+
+    # Set up selenium driver to use for JS section
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    driver = webdriver.Chrome(options=options)
+
+    for url_extension in url_extensions:
+        url = url + str(url_extension)
+        driver.get(url)
+
+        try:  
+            qualSection = driver.find_element_by_class_name("jobsearch-ReqAndQualSection-item--wrapper")
+            qualifications.append(qualSection.text)
+        except Exception as e:
+            qualifications.append("NA")
+
+        # Reset url
+        url = url[:-16]
+
+    driver.quit()
+    return(qualifications)
+
+
+
 
 # Build url with a search query and optional arguments for location, salary, and page start filters
 def build_url(query, location="", salary="", start=""):
@@ -81,6 +120,7 @@ def build_df(url):
     locations = []
     salaries = []
     summaries = []
+    qualifications = []
     # Loop through first 5 pages of job postings and add data
     for start in range(0, 50, 10):
         if (start==0):
@@ -98,6 +138,7 @@ def build_df(url):
         locations.extend(extract_location_from_result(soup))
         salaries.extend(extract_salary_from_result(soup))
         summaries.extend(extract_summary_from_result(soup))
+        qualifications.extend(extract_qualifications_from_result(url))
 
         # Check if next button exists, if not break out of next page loop.
         next_button = soup.find("a", attrs={"aria-label": "Next"})
@@ -105,7 +146,7 @@ def build_df(url):
             break
 
     # dictionary of lists for column names
-    columns = {'title' : job_titles, 'company' : companies, 'location' : locations, 'salary' : salaries, 'summary' : summaries}
+    columns = {'title' : job_titles, 'company' : companies, 'location' : locations, 'salary' : salaries, 'summary' : summaries, 'qualifications' : qualifications}
     return pd.DataFrame(columns)
 
 
