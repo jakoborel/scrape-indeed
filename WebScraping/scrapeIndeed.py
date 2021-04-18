@@ -92,18 +92,25 @@ def extract_qualifications_from_result(url):
     for url_extension in url_extensions:
         url = url + str(url_extension)
         driver.get(url)
-
-        try:  
-            qualSection = driver.find_element_by_class_name("jobsearch-ReqAndQualSection-item--wrapper")
-            qualifications.append(qualSection.text)
-        except Exception as e:
+        qualSection = driver.find_elements_by_class_name("jobsearch-ReqAndQualSection-item--wrapper")
+        if len(qualSection) > 0:
+            qualifications.append(qualSection[0].text)
+        else:
             qualifications.append("NA")
+
+        # try:  
+        #     qualSection = driver.find_element_by_class_name("jobsearch-ReqAndQualSection-item--wrapper")
+        #     qualifications.append(qualSection.text)
+        # except Exception as e:
+        #     qualifications.append("NA")
 
         # Reset url
         url = url[:-16]
 
     driver.quit()
     return(qualifications)
+
+# print(extract_qualifications_from_result("https://www.indeed.com/jobs?q=receptionist&l=Omaha%2C%20NE"))
 
 
 
@@ -114,6 +121,7 @@ def build_url(query, location="", salary="", start=""):
 
 
 # Build pandas DataFrame that contains the job post information.
+# Returning an empty DataFrame and I have no idea why.
 def build_df(url):
     job_titles = []
     companies = []
