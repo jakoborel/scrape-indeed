@@ -1,7 +1,6 @@
-from DataAnalysis.cleanData import *
 from spyre import server
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 class App(server.App):
 	title = "Analyze Online Job Postings"
@@ -15,6 +14,11 @@ class App(server.App):
 			  {"type" : 'text',
 			  	"key" : 'salary',
 			  	"label" : 'Salary'}]
+			  # {"type" : 'dropdown',
+			  # 	"label" : 'Visualization',
+			  # 	"options" : [ {"label": "Max Salary", "value":"Max_Salary"},
+     #                          {"label": "Min Salary", "value":"Min_Salary"}],
+			  #   "key" : 'visualization'}]
 
 	# used to trigger when to perform an action (reloading output)
 	controls = [dict(type="button",
@@ -23,7 +27,11 @@ class App(server.App):
 
 	tabs = ["Dashboard", "Table"]
 
-	outputs = [dict(type="html",
+	outputs = [	dict(type="plot",
+					id="visualization",
+					tab="Dashboard",
+					control_id="button1"),
+				dict(type="html",
 					id="html",
 					tab="Table",
 					#add control linked to the control id to refresh output
@@ -35,6 +43,12 @@ class App(server.App):
 
 	# define how html output looks
 	# Use params to call to input variables
+	def getPlot(self, params):
+		df = pd.read_csv("Data_Job_SF.csv")
+		plt_obj = df.boxplot(column=["Max_Salary", "Min_Salary"], showmeans=True)
+		fig = plt_obj.get_figure()
+		return fig
+
 	def getHTML(self, params):
 		return "Temporary prototype data used to display visuals:"
 
