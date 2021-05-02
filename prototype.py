@@ -45,7 +45,7 @@ class App(server.App):
 	# Use params to call to input variables
 	def getPlot(self, params):
 		df = pd.read_csv("Data_Job_SF.csv")
-		plt_obj = df.boxplot(column=["Max_Salary", "Min_Salary"], showmeans=True)
+		plt_obj = df.boxplot(column=["Min_Salary", "Max_Salary"], showmeans=True)
 		fig = plt_obj.get_figure()
 		return fig
 
